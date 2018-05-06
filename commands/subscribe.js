@@ -19,7 +19,7 @@ module.exports.run = async (bot, message, args) => {
 
     if (name === -1) return errors.usage(message, "subscribe", `${creatorName} is not a creator role`);
 
-    let creatorRole = message.guild.roles.find(`name`, creatorName);
+    let creatorRole = message.guild.roles.find(`name`, kaCreators.names[name]);
 
     if (!message.member.roles.has(creatorRole.id)) {
         message.member.addRole(creatorRole.id);

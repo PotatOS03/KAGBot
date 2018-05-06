@@ -13,8 +13,8 @@ fs.readdir("./commands", (err, files) => {
 })
 
 module.exports.run = async (bot, message, args) => {
+    let guardianRole = message.guild.roles.find(`name`, "Guardian");
     let perPage = 12;
-
     let totalPages = Math.ceil(cmds.length / perPage);
 
     let arg = args.slice(0).join(" ");
@@ -44,7 +44,7 @@ module.exports.run = async (bot, message, args) => {
     .setFooter(`Page ${page} of ${totalPages}. Type "${botconfig.prefix}help (page/command)" to view a new page or more information about a command`)
     
     for (var i = page * perPage - perPage; i < Math.min(page * perPage, cmds.length); i++) {
-        helpEmbed.addField(cmds[i].name, cmds[i].desc)
+        if (cmds[i].perms !== "Guardian" || message.member.roles.has(guardianRole.id)) helpEmbed.addField(cmds[i].name, cmds[i].desc)
     }
 
     try {
