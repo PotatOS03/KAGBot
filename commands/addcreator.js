@@ -3,7 +3,8 @@ const fs = require("fs");
 const errors = require("../utilities/errors.js");
 
 module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("MANAGE_ROLES")) return errors.noPerms(message, "Manage Roles");
+    let guardianRole = message.guild.roles.find(`name`, "Guardian");
+    if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Guardian");
 
     if (!args[0]) return errors.usage(message, "addcreator", "Specify a user to make a KA Creator");
 
@@ -67,7 +68,6 @@ module.exports.run = async (bot, message, args) => {
         }
     }
     kaCreators.names.push(KAname);
-    kaCreators.names.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
     
     fs.writeFile("./kacreators.json", JSON.stringify(kaCreators), (err) => {
         if (err) console.log(err);
@@ -80,5 +80,5 @@ module.exports.help = {
     name: "addcreator",
     desc: "Set up a channel and role for a KA Creator",
     usage: " [user] [name]",
-    perms: "Manage Roles"
+    perms: "Guardian"
 }

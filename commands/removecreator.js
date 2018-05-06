@@ -3,7 +3,8 @@ const fs = require("fs");
 const errors = require("../utilities/errors.js");
 
 module.exports.run = async (bot, message, args) => {
-    if (!message.member.hasPermission("MANAGE_ROLES")) return errors.noPerms(message, "Manage Roles");
+    let guardianRole = message.guild.roles.find(`name`, "Guardian");
+    if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Guardian");
 
     let subName = args.slice(0).join(" ");
     if (!subName) return errors.usage(message, "removecreator", "No creator specified");
@@ -36,5 +37,5 @@ module.exports.help = {
     name: "removecreator",
     desc: "Remove a KA Creator channel and role",
     usage: " [creator]",
-    perms: "Manage Roles"
+    perms: "Guardian"
 }
