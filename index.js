@@ -52,4 +52,4 @@ bot.on("message", async message => { // When a message is sent
 });
 
 // Log into the bot using the token
-bot.login(process.eng.BOT_TOKEN);
+bot.login(process.env.BOT_TOKEN);
