@@ -56,7 +56,7 @@ module.exports.run = async (bot, message, args) => {
     await (KAUser.addRole(nameRole.id));
 
     try {
-        await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${nameChannel.id}>. Enjoy!`);
+        //await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${nameChannel.id}>. Enjoy!`);
     } catch(e) {
         message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${nameChannel.id}>. Enjoy!`);
     }
@@ -64,10 +64,16 @@ module.exports.run = async (bot, message, args) => {
     let kaCreators = require("../kacreators.json");
     if (!kaCreators.names) {
         kaCreators = {
-            names: []
+            names: [],
+            users: [],
+            roles: [],
+            channels: []
         }
     }
     kaCreators.names.push(KAname);
+    kaCreators.users.push(KAUser.id);
+    kaCreators.roles.push(nameRole.id);
+    kaCreators.channels.push(nameChannel.id);
     
     fs.writeFile("./kacreators.json", JSON.stringify(kaCreators), (err) => {
         if (err) console.log(err);

@@ -42,6 +42,6 @@ module.exports.run = async (bot, message, args) => {
 
 module.exports.help = {
     name: "subscribe",
-    desc: "Subscribe to a KA creator to view their subscription channel",
+    desc: "Subscribe to a KA Creator to view their subscription channel",
     usage: " [creator]"
 }
