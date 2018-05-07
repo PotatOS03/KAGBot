@@ -10,6 +10,7 @@ module.exports.run = async (bot, message, args) => {
     if (!subName) return errors.usage(message, "removecreator", "No creator specified");
 
     let kaCreators = require("../kacreators.json");
+    if (!kaCreators.names || kaCreators.names.length < 1) return errors.other(message, "There are currently no KA Creator roles");
 
     let sub = -1;
 

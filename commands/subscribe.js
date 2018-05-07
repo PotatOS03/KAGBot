@@ -7,6 +7,7 @@ module.exports.run = async (bot, message, args) => {
     if (message.channel.name !== "commands") return errors.other(message, `Subscribe in ${commandChannel}`);
 
     let kaCreators = require("../kacreators.json");
+    if (!kaCreators.names || kaCreators.names.length < 1) return errors.other(message, "There are currently no KA Creator roles");
 
     if (!args[0]) return errors.usage(message, "subscribe", "Choose a creator to subscribe to\nUse the subscriptions command to view all creators");
 
