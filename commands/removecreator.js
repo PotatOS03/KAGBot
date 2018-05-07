@@ -19,6 +19,9 @@ module.exports.run = async (bot, message, args) => {
     if (sub === -1) return errors.usage(message, "removecreator", `${subName} is not a KA Creator`);
 
     kaCreators.names.splice(sub);
+    kaCreators.users.splice(sub);
+    kaCreators.roles.splice(sub);
+    kaCreators.channels.splice(sub);
     
     fs.writeFile("./kacreators.json", JSON.stringify(kaCreators), (err) => {
         if (err) console.log(err);

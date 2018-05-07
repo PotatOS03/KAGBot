@@ -7,8 +7,8 @@ module.exports.run = async (bot, message, args) => {
     if (message.channel.name !== "commands") return errors.other(message, `View subscriptions in ${commandChannel}`);
     
     let kaCreators = require("../kacreators.json");
-    if (!kaCreators.names || kaCreators.names.length < 1) return errors.other(message, "There are currently no KA Creator roles");
     kaCreators.names.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+    if (!kaCreators.names || kaCreators.names.length < 1) return errors.other(message, "There are currently no KA Creator roles");
 
     let subMembers = [];
 
