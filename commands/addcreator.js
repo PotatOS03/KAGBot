@@ -61,7 +61,7 @@ module.exports.run = async (bot, message, args) => {
         message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${nameChannel.id}>. Enjoy!`);
     }
 
-    let kaCreators = require("../kacreators.json");
+    let kaCreators = JSON.parse(fs.readFileSync("./kacreators.json", "utf8"));
     if (!kaCreators.names) {
         kaCreators = {
             names: [],
