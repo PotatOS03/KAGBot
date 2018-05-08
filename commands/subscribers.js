@@ -12,10 +12,10 @@ module.exports.run = async (bot, message, args) => {
     let subCreator = message.mentions.members.first();
     if (!subCreator) subCreator = args[0];
     if (!subCreator) subCreator = message.author;
-
+    
     let creator = -1;
     for (var i = 0; i < kaCreators.users.length; i++) {
-        if (kaCreators.users[i] === subCreator.id || kaCreators.users[i] === subCreator || kaCreators.names[i].toLowerCase() === subCreator.toLowerCase()) creator = i;
+        if (kaCreators.users[i] === subCreator.id || kaCreators.users[i] === subCreator || (subCreator.toString() === subCreator && kaCreators.names[i].toLowerCase() === subCreator.toLowerCase())) creator = i;
     }
 
     if (creator === -1) return errors.noPerms(message, "User must be a KA Creator");
