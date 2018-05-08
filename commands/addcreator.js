@@ -48,7 +48,7 @@ module.exports.run = async (bot, message, args) => {
             }, {
                 id: everyoneRole.id,
                 deny: ["READ_MESSAGES", "SEND_MESSAGES"]
-            }], `KA Subscription channel for ${KAUser}`)
+            }], `KA Subscription channel for ${KAname}`)
         } catch(e) {
             console.log(e.stack);
         }
