@@ -15,7 +15,7 @@ module.exports.run = async (bot, message, args) => {
 
     let creator = -1;
     for (var i = 0; i < kaCreators.users.length; i++) {
-        if (kaCreators.users[i] === subCreator.id || kaCreators.users[i] === subCreator) creator = i;
+        if (kaCreators.users[i] === subCreator.id || kaCreators.users[i] === subCreator || kaCreators.names[i].toLowerCase() === subCreator.toLowerCase()) creator = i;
     }
 
     if (creator === -1) return errors.noPerms(message, "User must be a KA Creator");
