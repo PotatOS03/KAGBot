@@ -9,6 +9,10 @@ module.exports.run = async (bot, message, args) => {
     if (!args[0]) return errors.usage(message, "addcreator", "Specify a user to make a KA Creator");
 
     let KAUser = message.mentions.members.first();
+    if (!KAUser) KAUser = args[0];
+    message.guild.members.forEach(m => {
+        if (m.id === args[0]) KAUser = m;
+    })
     if (!KAUser) return errors.usage(message, "addcreator", `${args[0]} is not a member of this server`);
 
     let kaCreatorRole = message.guild.roles.find(`name`, "KA Creator");
@@ -43,7 +47,7 @@ module.exports.run = async (bot, message, args) => {
                 allow: ["READ_MESSAGES", "READ_MESSAGE_HISTORY", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
             }, {
                 id: everyoneRole.id,
-                deny: ["READ_MESSAGES"]
+                deny: ["READ_MESSAGES", "SEND_MESSAGES"]
             }], `KA Subscription channel for ${KAUser}`)
         } catch(e) {
             console.log(e.stack);
