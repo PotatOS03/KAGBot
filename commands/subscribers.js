@@ -10,7 +10,7 @@ module.exports.run = async (bot, message, args) => {
     if (!kaCreators.names || kaCreators.names.length < 1) return errors.other(message, "There are currently no KA Creator roles");
 
     let subCreator = message.mentions.members.first();
-    if (!subCreator) subCreator = args[0];
+    if (!subCreator) subCreator = args.join(" ");
     if (!subCreator) subCreator = message.author;
     
     let creator = -1;
