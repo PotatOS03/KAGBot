@@ -28,7 +28,7 @@ fs.readdir("./commands", (err, files) => {
 bot.on("ready", async () => { // When the bot is loaded
   bot.user.setUsername("KA Creator");
   console.log(`${bot.user.username} is online in ${bot.guilds.size} servers!`);
-  //bot.user.setActivity(`${botconfig.prefix}help`);
+  bot.user.setActivity(`${botconfig.prefix}help`);
 });
 
 bot.on("message", async message => { // When a message is sent
@@ -53,8 +53,14 @@ bot.on("message", async message => { // When a message is sent
   let languageFilters = require("./languagefilters.json");
   if (!languageFilters[message.guild.id] || languageFilters[message.guild.id].words.length < 1) return;
 
+  for (var i = 0; i < languageFilters[message.guild.id].swears.length; i++) {
+    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].words[i] >= 0)) {
+      await message.delete();
+    }
+  }
+
   for (var i = 0; i < languageFilters[message.guild.id].words.length; i++) {
-    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].words[i].toLowerCase()) >= 0) {
+    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].words[i]) >= 0) {
       if (message.content.length - 20 > languageFilters[message.guild.id].words[i].length && message.content.toLowerCase().split(languageFilters[message.guild.id].words[i]).length - 1 < message.content.length / languageFilters[message.guild.id].words[i].length / 3) return;
       //await message.author.send(`You said a forbidden character sequence in ${message.guild.name}: ${languageFilters[message.guild.id].words[i]}`);
       await message.delete();
