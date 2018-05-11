@@ -54,7 +54,7 @@ bot.on("message", async message => { // When a message is sent
   if (!languageFilters[message.guild.id] || languageFilters[message.guild.id].words.length < 1) return;
 
   for (var i = 0; i < languageFilters[message.guild.id].swears.length; i++) {
-    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].words[i] >= 0)) {
+    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].swears[i] >= 0)) {
       await message.delete();
     }
   }
