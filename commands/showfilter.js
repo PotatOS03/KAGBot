@@ -8,11 +8,12 @@ module.exports.run = async (bot, message, args) => {
 
     let languageFilters = require("../languagefilters.json");
 
-    if (!languageFilters[message.guild.id] || languageFilters[message.guild.id].words.length < 1) return errors.usage(message, "removefilter", "There are no message filters in this server");
+    if (!languageFilters[message.guild.id] || (languageFilters[message.guild.id].words.length < 1 && languageFilters[message.guild.id].swears.length < 1)) return errors.other(message, "There are no message filters in this server");
     
     let fEmbed = new Discord.RichEmbed()
     .setTitle(`${message.guild.name} message filter`)
-    .addField("Words", languageFilters[message.guild.id].words);
+    if (languageFilters[message.guild.id].words.length > 0) fEmbed.addField("Sequences", languageFilters[message.guild.id].words);
+    if (languageFilters[message.guild.id].swears.length > 0) fEmbed.addField("Swears", languageFilters[message.guild.id].swears);
 
     try {
         await message.author.send(fEmbed);

@@ -44,7 +44,7 @@ module.exports.run = async (bot, message, args) => {
     .setFooter(`Page ${page} of ${totalPages}. Type "${botconfig.prefix}help (page/command)" to view a new page or more information about a command`)
     
     for (var i = page * perPage - perPage; i < Math.min(page * perPage, cmds.length); i++) {
-        if (cmds[i].perms !== "Guardian" || message.member.roles.has(guardianRole.id)) helpEmbed.addField(cmds[i].name, cmds[i].desc)
+        if ((cmds[i].perms !== "Guardian" || message.member.roles.has(guardianRole.id)) && cmds[i].name !== "eval") helpEmbed.addField(cmds[i].name, cmds[i].desc)
     }
 
     try {
