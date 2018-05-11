@@ -24,6 +24,7 @@ module.exports.run = async (bot, message, args) => {
         languageFilters[message.guild.id].words.push(args[1].toLowerCase());
     }
     if (args[0] === "swear") {
+        message.delete().catch();
         if (languageFilters[message.guild.id].swears.includes(args[1].toLowerCase())) return errors.usage(message, "addfilter", `${args[1]} is already in the message filter`);
         languageFilters[message.guild.id].swears.push(args[1].toLowerCase());
     }
