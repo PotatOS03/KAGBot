@@ -51,10 +51,10 @@ bot.on("message", async message => { // When a message is sent
   }
 
   let languageFilters = require("./languagefilters.json");
-  if (!languageFilters[message.guild.id] || languageFilters[message.guild.id].words.length < 1) return;
+  if (!languageFilters[message.guild.id] || (languageFilters[message.guild.id].words.length < 1 && languageFilters[message.guild.id].sequence.length < 1)) return;
 
   for (var i = 0; i < languageFilters[message.guild.id].swears.length; i++) {
-    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].swears[i] >= 0)) {
+    if (message.content.toLowerCase().split(languageFilters[message.guild.id].swears[i]).length > 1) {
       await message.delete();
     }
   }
