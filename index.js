@@ -61,7 +61,7 @@ bot.on("message", async message => { // When a message is sent
 
   for (var i = 0; i < languageFilters[message.guild.id].words.length; i++) {
     if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].words[i]) >= 0) {
-      if (message.content.length - 20 > languageFilters[message.guild.id].words[i].length && message.content.toLowerCase().split(languageFilters[message.guild.id].words[i]).length - 1 < message.content.length / languageFilters[message.guild.id].words[i].length / 3) return;
+      if (message.content.length - 20 >= languageFilters[message.guild.id].words[i].length && message.content.toLowerCase().split(languageFilters[message.guild.id].words[i]).length - 1 < message.content.length / languageFilters[message.guild.id].words[i].length / 3) return;
       //await message.author.send(`You said a forbidden character sequence in ${message.guild.name}: ${languageFilters[message.guild.id].words[i]}`);
       await message.delete();
     }
