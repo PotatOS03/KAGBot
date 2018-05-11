@@ -8,8 +8,6 @@ const fs = require("fs");
 
 // File for the bot configuration - includes default prefix
 const botconfig = require("./botconfig.json");
-// File for the token - shhh, it's a secret (also doesn't belong in GitHub code)
-const tokenfile = require("./token.json");
 
 // Setup of all commands in the commands folder
 fs.readdir("./commands", (err, files) => {
@@ -67,4 +65,4 @@ bot.on("message", async message => { // When a message is sent
 });
 
 // Log into the bot using the token
-bot.login(tokenfile.token); // GitHub: bot.login(process.env.BOT_TOKEN)
+bot.login(process.env.BOT_TOKEN);
