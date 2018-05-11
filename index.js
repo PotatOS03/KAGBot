@@ -8,6 +8,8 @@ const fs = require("fs");
 
 // File for the bot configuration - includes default prefix
 const botconfig = require("./botconfig.json");
+// File for the token - shhh, it's a secret (also doesn't belong in GitHub code)
+const tokenfile = require("./token.json");
 
 // Setup of all commands in the commands folder
 fs.readdir("./commands", (err, files) => {
@@ -25,10 +27,10 @@ fs.readdir("./commands", (err, files) => {
     console.log(`${f} loaded!`);
   });
 });
-
 bot.on("ready", async () => { // When the bot is loaded
+  bot.user.setUsername("KA Creator");
   console.log(`${bot.user.username} is online in ${bot.guilds.size} servers!`);
-  bot.user.setActivity(`${botconfig.prefix}help`);
+  //bot.user.setActivity(`${botconfig.prefix}help`);
 });
 
 bot.on("message", async message => { // When a message is sent
@@ -43,13 +45,26 @@ bot.on("message", async message => { // When a message is sent
   // Simplify the server's prefix into the prefix variable
   let prefix = botconfig.prefix;
   
-  // If the message doesn't start with the prefix
-  if (!message.content.startsWith(prefix)) return;
+  // If the message starts with the prefix
+  if (message.content.startsWith(prefix)) {
+    // If the message is a command, run the command
+    let commandfile = bot.commands.get(cmd.slice(prefix.length));
+    if (commandfile) return commandfile.run(bot, message, args);
+  }
 
-  // If the message is a command, run the command
-  let commandfile = bot.commands.get(cmd.slice(prefix.length));
-  if (commandfile) return commandfile.run(bot, message, args);
+  let languageFilters = require("./languagefilters.json");
+  if (!languageFilters[message.guild.id] || languageFilters[message.guild.id].words.length < 1) return;
+
+  let guardianRole = message.guild.roles.find(`name`, "Guardian");
+  if (message.member.roles.has(guardianRole.id)) return;
+
+  for (var i = 0; i < languageFilters[message.guild.id].words.length; i++) {
+    if (message.content.toLowerCase().indexOf(languageFilters[message.guild.id].words[i].toLowerCase()) >= 0) {
+      //await message.author.send(`You said a forbidden character sequence in ${message.guild.name}: ${languageFilters[message.guild.id].words[i]}`);
+      await message.delete();
+    }
+  }
 });
 
 // Log into the bot using the token
-bot.login(process.env.BOT_TOKEN);
+bot.login(tokenfile.token); // GitHub: bot.login(process.env.BOT_TOKEN)
