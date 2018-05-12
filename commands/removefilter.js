@@ -21,9 +21,7 @@ module.exports.run = async (bot, message, args) => {
         if (languageFilters[message.guild.id].swears[i] === args[0].toLowerCase()) languageFilters[message.guild.id].swears.splice(i);
     }
 
-    fs.writeFile("./languagefilters.json", JSON.stringify(languageFilters), (err) => {
-        if (err) console.log(err);
-    });
+    fs.writeFileSync("./languagefilters.json", JSON.stringify(languageFilters));
 
     message.channel.send(`${args[0]} has been successfully removed from the message filter`);
 }

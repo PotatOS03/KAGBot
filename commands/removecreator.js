@@ -24,9 +24,7 @@ module.exports.run = async (bot, message, args) => {
     kaCreators.roles.splice(sub);
     kaCreators.channels.splice(sub);
     
-    fs.writeFile("./kacreators.json", JSON.stringify(kaCreators), (err) => {
-        if (err) console.log(err);
-    });
+    fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
 
     let subRole = message.guild.roles.find(`name`, subName);
     subRole.delete();

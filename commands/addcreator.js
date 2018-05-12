@@ -65,7 +65,7 @@ module.exports.run = async (bot, message, args) => {
         message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${nameChannel.id}>. Enjoy!`);
     }
 
-    let kaCreators = JSON.parse(fs.readFileSync("./kacreators.json", "utf8"));
+    let kaCreators = require("../kacreators.json");
     if (!kaCreators.names) {
         kaCreators = {
             names: [],
@@ -79,9 +79,7 @@ module.exports.run = async (bot, message, args) => {
     kaCreators.roles.push(nameRole.id);
     kaCreators.channels.push(nameChannel.id);
     
-    fs.writeFile("./kacreators.json", JSON.stringify(kaCreators), (err) => {
-        if (err) console.log(err);
-    });
+    fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
 
     message.channel.send("KA Creator: `" + KAname + "` successfully added. Make sure to change the role color if necessary");
 }

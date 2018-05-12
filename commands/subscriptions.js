@@ -1,12 +1,11 @@
 const Discord = require("discord.js");
-const fs = require("fs");
 const errors = require("../utilities/errors.js");
 
 module.exports.run = async (bot, message, args) => {
     let commandChannel = message.guild.channels.find(`name`, "commands");
     if (message.channel.name !== "commands") return errors.other(message, `View subscriptions in ${commandChannel}`);
     
-    let kaCreators = JSON.parse(fs.readFileSync("./kacreators.json", "utf8"));
+    let kaCreators = require("../kacreators.json")
     if (!kaCreators.names || kaCreators.names.length < 1) return errors.other(message, "There are currently no KA Creator roles");
     
     kaCreators.names.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);

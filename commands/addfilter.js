@@ -29,9 +29,7 @@ module.exports.run = async (bot, message, args) => {
         languageFilters[message.guild.id].swears.push(args[1].toLowerCase());
     }
 
-    fs.writeFile("./languagefilters.json", JSON.stringify(languageFilters), (err) => {
-        if (err) console.log(err);
-    });
+    fs.writeFileSync("./languagefilters.json", JSON.stringify(languageFilters));
 
     if (args[0] === "sequence") return message.channel.send(`${args[1]} has been successfully added to the message filter`);
     message.channel.send("Word successfully added to the swear filter");
