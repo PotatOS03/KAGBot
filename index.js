@@ -50,6 +50,8 @@ bot.on("message", async message => { // When a message is sent
     if (commandfile) return commandfile.run(bot, message, args);
   }
 
+  if (/^[\s.]+$/.test(message.content)) await message.delete();
+
   let languageFilters = require("./languagefilters.json");
   if (!languageFilters[message.guild.id] || (languageFilters[message.guild.id].words.length < 1 && languageFilters[message.guild.id].sequence.length < 1)) return;
 
@@ -69,4 +71,4 @@ bot.on("message", async message => { // When a message is sent
 });
 
 // Log into the bot using the token
-bot.login(process.env.BOT_TOKEN);
+bot.login(process.env.BOT_TOKEN)
