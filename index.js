@@ -32,7 +32,7 @@ bot.on("ready", async () => { // When the bot is loaded
 
   let PotatOS = bot.users.find(`id`, "286664522083729409");
   PotatOS.send("Bot reloaded!");
-  //bot.user.setActivity(`${botconfig.prefix}help`);
+  bot.user.setActivity(`${botconfig.prefix}help`);
 });
 
 bot.on("message", async message => { // When a message is sent
