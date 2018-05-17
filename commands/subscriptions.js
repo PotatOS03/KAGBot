@@ -30,19 +30,22 @@ module.exports.run = async (bot, message, args) => {
             });
         });
 
-        if (subsText[subsText.length - 1].length + longestSubName + subMembers[i].length + 18 > 1024) subsText.push("");
+        if (subsText[subsText.length - 1].length + longestSubName + 3 > 1024) subsText.push("");
 
         subsText[subsText.length - 1] += "`" + kaCreators.names[i];
         for (var j = -3; j < longestSubName - kaCreators.names[i].length; j++) {
             subsText[subsText.length - 1] += " ";
         }
-        subsText[subsText.length - 1] += subMembers[i] + " subscribers`\n";
+        subsText[subsText.length - 1] += `${subMembers[i]}\`\n`;
     }
 
+    let page = Math.floor(parseInt(args[0]));
+    if (!page || page < 1) page = 1;
+    if (page > subsText.length) page = subsText.length;
+
     let sEmbed = new Discord.RichEmbed()
-    .addField("KA Subscriptions", subsText[0])
-    for (var i = 1; i < subsText.length; i++) sEmbed.addField("Continued", subsText[i])
-    sEmbed.setFooter(`Use the subscribe command to subscribe to or unsubscribe from a KA Creator`)
+    .addField("KA Subscriptions", subsText[page - 1])
+    .setFooter(`Use the subscribe command to subscribe to or unsubscribe from a KA Creator`)
 
     message.channel.send(sEmbed);
 }
@@ -50,5 +53,6 @@ module.exports.run = async (bot, message, args) => {
 module.exports.help = {
     name: "subscriptions",
     desc: "View all KA Creators",
+    usage: " (page)",
     info: "How many subscribers each has"
 }
