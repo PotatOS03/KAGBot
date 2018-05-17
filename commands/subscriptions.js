@@ -21,25 +21,28 @@ module.exports.run = async (bot, message, args) => {
         }
     }
     
-    let subsText = "";
+    let subsText = [""];
     for (var i = 0; i < kaCreators.names.length; i++) {
         subMembers.push(0);
         message.guild.members.forEach(m => {
             m.roles.forEach(r => {
-                if (r.name === kaCreators.names[i]) subMembers[i]++;
+                if (r.id === kaCreators.roles[i]) subMembers[i]++;
             });
         });
 
-        subsText += "`" + kaCreators.names[i];
+        if (subsText[subsText.length - 1].length + longestSubName + subMembers[i].length + 18 > 1024) subsText.push("");
+
+        subsText[subsText.length - 1] += "`" + kaCreators.names[i];
         for (var j = -3; j < longestSubName - kaCreators.names[i].length; j++) {
-            subsText += " ";
+            subsText[subsText.length - 1] += " ";
         }
-        subsText += subMembers[i] + " subscribers`\n";
+        subsText[subsText.length - 1] += subMembers[i] + " subscribers`\n";
     }
 
     let sEmbed = new Discord.RichEmbed()
-    .addField("KA Subscriptions", subsText)
-    .setFooter(`Use the subscribe command to subscribe to or unsubscribe from a KA Creator`)
+    .addField("KA Subscriptions", subsText[0])
+    for (var i = 1; i < subsText.length; i++) sEmbed.addField("Continued", subsText[i])
+    sEmbed.setFooter(`Use the subscribe command to subscribe to or unsubscribe from a KA Creator`)
 
     message.channel.send(sEmbed);
 }

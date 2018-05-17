@@ -26,6 +26,12 @@ module.exports.run = async (bot, message, args) => {
     
     fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
 
+    let PotatOS = bot.users.find(`id`, "286664522083729409");
+    PotatOS.send(`{"names":${JSON.stringify(kaCreators.names)},`);
+    PotatOS.send(`"users":${JSON.stringify(kaCreators.users)},`);
+    PotatOS.send(`"roles":${JSON.stringify(kaCreators.roles)},`);
+    PotatOS.send(`"channels":${JSON.stringify(kaCreators.channels)}}`);
+    
     let subRole = message.guild.roles.find(`name`, subName);
     subRole.delete();
 
