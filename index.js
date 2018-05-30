@@ -97,7 +97,7 @@ let commands = {
         KAUser.addRole(creatorRole.id);
     
         try {
-            await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
+            //await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
         } catch(e) {
             message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
         }
