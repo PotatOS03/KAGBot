@@ -380,9 +380,13 @@ bot.on("message", async message => { // When a message is sent
     for (let i = 0; i < JSON.stringify(kaCreators).length; i += 2000) logChannel.send(JSON.stringify(kaCreators).substr(i, i + 2000));
     fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
   }
-    
+  
+  // Fun language filter stuff - you won't regret it
+
   if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
-    
+
+  if (message.content.toLowerCase().indexOf("oops") >= 0) message.channel.send("<:oops:451813761481965568>");
+
   let languageFilters = ["xd"];
     
   try {
