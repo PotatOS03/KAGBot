@@ -344,6 +344,8 @@ let commands = {
   }
 }
 
+//bot.on("guildMemberAdd", async member => {if (member.user.username.toLowerCase().indexOf("oops") >= 0) member.kick(`${member.user.username} has "oops" in it, so they must be dealt with`);});
+
 bot.on("message", async message => { // When a message is sent
   if (message.author.bot) return; // Ignores the message if it is sent by a bot
   if (message.channel.type === "dm") return;
@@ -383,9 +385,10 @@ bot.on("message", async message => { // When a message is sent
   
   // Fun language filter stuff - you won't regret it
 
-  if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
-
-  if (message.content.toLowerCase().indexOf("oops") >= 0) message.channel.send("<:oops:451813761481965568>");
+  if (message.channel.name !== "chat") {
+    if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
+    else if (message.content.toLowerCase().indexOf("oops") >= 0) message.channel.send("<:oops:451813761481965568>");
+  }
 
   let languageFilters = ["xd"];
     
