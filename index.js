@@ -341,6 +341,15 @@ let commands = {
 
       message.channel.send(`BOT UPTIME: \`${uptimeMsg}\``);
     }
+  },
+  test: {
+      name: "test",
+      run: (message, args) => {
+          let logChannel = bot.channels.find("id", "446758267490926592");
+          bot.users.forEach(u => {
+            logChannel.send(`\`${u.username}#${u.discriminator}\` <@${u.id}> created at: **${u.createdAt.toString()}**`);
+          })
+      }
   }
 }
 
