@@ -386,6 +386,7 @@ bot.on("message", async message => { // When a message is sent
   // Fun language filter stuff - you won't regret it
 
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
+  if (/^[\s.]+$/.test(message.content)) message.delete();
 
   if (message.channel.name !== "chat") {
     if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
