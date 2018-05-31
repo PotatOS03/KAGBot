@@ -97,7 +97,7 @@ let commands = {
         KAUser.addRole(creatorRole.id);
     
         try {
-            //await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
+            await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
         } catch(e) {
             message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
         }
@@ -338,7 +338,7 @@ let commands = {
       if (uptime >= 3600000) uptimeMsg += `${Math.floor((uptime % 86400000) / 3600000)}h, `;
       if (uptime >= 60000) uptimeMsg += `${Math.floor((uptime % 3600000) / 60000)}m, `;
       uptimeMsg += `${(uptime % 60000) / 1000}s`;
-      
+
       message.channel.send(`BOT UPTIME: \`${uptimeMsg}\``);
     }
   }
@@ -372,11 +372,12 @@ bot.on("message", async message => { // When a message is sent
       }
     }
   }
-    
+  
   if (JSON.stringify(kaCreators) !== oldKaCreators) {
     let logChannel = bot.channels.find("id", "446758267490926592");
-        
-    logChannel.send(JSON.stringify(kaCreators));
+    
+    let logCreators = [];
+    for (let i = 0; i < JSON.stringify(kaCreators).length; i += 2000) logChannel.send(JSON.stringify(kaCreators).substr(i, i + 2000));
     fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
   }
     
