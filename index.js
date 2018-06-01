@@ -388,7 +388,7 @@ bot.on("message", async message => { // When a message is sent
     let logChannel = bot.channels.find("id", "446758267490926592");
     
     let logCreators = [];
-    for (let i = 0; i < JSON.stringify(kaCreators).length; i += 2000) logChannel.send(JSON.stringify(kaCreators).substr(i, i + 2000));
+    for (let i = 0; i < JSON.stringify(kaCreators).length; i += 2000) logChannel.send(JSON.stringify(kaCreators).substr(i, 2000));
     fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
   }
   
