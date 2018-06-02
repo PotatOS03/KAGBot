@@ -41,14 +41,14 @@ let commands = {
       let KAUser = message.mentions.members.first();
       if (!KAUser) KAUser = args[0];
       message.guild.members.forEach(m => {
-          if (m.id === args[0]) KAUser = m;
+        if (m.id === args[0]) KAUser = m;
       })
       if (KAUser === args[0]) return errors.usage(message, commands.addcreator, `${args[0]} is not a member of this server`);
       
       if (!kaCreators.creators) {
-          kaCreators = {
-              creators: {}
-          }
+        kaCreators = {
+          creators: {}
+        }
       }
       if (kaCreators.creators[KAUser.id]) return errors.other(message, "That user is already a KA Creator");
       
@@ -60,35 +60,35 @@ let commands = {
       
       let creatorRole = message.guild.roles.find(`name`, KAname);
       if (!creatorRole) {
-          try {
-              creatorRole = await message.guild.createRole({
-                  name: KAname
-              })
-          } catch(e) {
-              errors.log(bot, message, e);
-          }
+        try {
+          creatorRole = await message.guild.createRole({
+            name: KAname
+          })
+        } catch(e) {
+          errors.log(bot, message, e);
+        }
       }
       
       let everyoneRole = message.guild.roles.find(`name`, "@everyone")
       let creatorChannel = message.guild.channels.find(`name`, KAname.split(" ").join("-").toLowerCase());
       
       if (!creatorChannel) {
-          try {
-              creatorChannel = await message.guild.createChannel(KAname, "text", [{
-                  id: KAUser.id,
-                  deny: ["CREATE_INSTANT_INVITE"],
-                  allow: ["MANAGE_CHANNELS", "MANAGE_ROLES_OR_PERMISSIONS", "MANAGE_WEBHOOKS", "READ_MESSAGES", "SEND_MESSAGES", "SEND_TTS_MESSAGES", "MANAGE_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "READ_MESSAGE_HISTORY", "MENTION_EVERYONE", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
-              }, {
-                  id: creatorRole.id,
-                  deny: ["CREATE_INSTANT_INVITE"],
-                  allow: ["READ_MESSAGES", "READ_MESSAGE_HISTORY", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
-              }, {
-                  id: everyoneRole.id,
-                  deny: ["READ_MESSAGES", "SEND_MESSAGES"]
-              }], `KA Subscription channel for ${KAname}`);
-          } catch(e) {
-              errors.log(bot, message, e);
-          }
+        try {
+          creatorChannel = await message.guild.createChannel(KAname, "text", [{
+            id: KAUser.id,
+            deny: ["CREATE_INSTANT_INVITE"],
+            allow: ["MANAGE_CHANNELS", "MANAGE_ROLES_OR_PERMISSIONS", "MANAGE_WEBHOOKS", "READ_MESSAGES", "SEND_MESSAGES", "SEND_TTS_MESSAGES", "MANAGE_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "READ_MESSAGE_HISTORY", "MENTION_EVERYONE", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
+          }, {
+            id: creatorRole.id,
+            deny: ["CREATE_INSTANT_INVITE"],
+            allow: ["READ_MESSAGES", "READ_MESSAGE_HISTORY", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
+          }, {
+            id: everyoneRole.id,
+            deny: ["READ_MESSAGES", "SEND_MESSAGES"]
+          }], `KA Subscription channel for ${KAname}`);
+        } catch(e) {
+          errors.log(bot, message, e);
+        }
       }
     
       let subCategory = message.guild.channels.find(`name`, "Subscriptions");
@@ -97,15 +97,15 @@ let commands = {
       KAUser.addRole(creatorRole.id);
     
       try {
-          await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
+        await KAUser.send(`Congratulations, you have been given your very own KA Subscription channel in ${message.guild.name}! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
       } catch(e) {
-          message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
+        message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
       }
     
       kaCreators.creators[KAUser.id] = {
-          name: KAname,
-          role: creatorRole.id,
-          channel: creatorChannel.id
+        name: KAname,
+        role: creatorRole.id,
+        channel: creatorChannel.id
       }
     
       message.channel.send("KA Creator: `" + KAname + "` successfully added. Make sure to change the role color if necessary and alphabetically sort the role and channel.");
@@ -136,17 +136,17 @@ let commands = {
 
       let arg = args.slice(0).join(" ");
       for (let i in commands) {
-          if (arg.toLowerCase() === commands[i].name.toLowerCase()) {
-              let cmdEmbed = new Discord.RichEmbed()
-              .setDescription(`**${commands[i].name}** command help`)
-              .addField("Usage \`[required] (optional)\`", "`" + `${botconfig.prefix}${commands[i].name}${(commands[i].usage || "")}` + "`")
-              .addField("Description", commands[i].desc)
-              if (commands[i].perms) cmdEmbed.addField("Required Permission", commands[i].perms)
-              if (commands[i].info) cmdEmbed.addField("More Information", commands[i].info)
-              .setFooter(`To view all commands, type "${botconfig.prefix}help (page)"`);
+        if (arg.toLowerCase() === commands[i].name.toLowerCase()) {
+          let cmdEmbed = new Discord.RichEmbed()
+          .setDescription(`**${commands[i].name}** command help`)
+          .addField("Usage \`[required] (optional)\`", "`" + `${botconfig.prefix}${commands[i].name}${(commands[i].usage || "")}` + "`")
+          .addField("Description", commands[i].desc)
+          if (commands[i].perms) cmdEmbed.addField("Required Permission", commands[i].perms)
+          if (commands[i].info) cmdEmbed.addField("More Information", commands[i].info)
+          .setFooter(`To view all commands, type "${botconfig.prefix}help (page)"`);
 
-              return message.channel.send(cmdEmbed);
-          }
+          return message.channel.send(cmdEmbed);
+        }
       }
 
       let helpEmbed = new Discord.RichEmbed()
@@ -155,15 +155,15 @@ let commands = {
       .setFooter(`Type "${botconfig.prefix}help (command)" to view more information about a command`)
       
       for (let i in commands) {
-          if ((commands[i].perms !== "Guardian" || message.member.roles.has(guardianRole.id))) helpEmbed.addField(commands[i].name, commands[i].desc)
+        if ((commands[i].perms !== "Guardian" || message.member.roles.has(guardianRole.id))) helpEmbed.addField(commands[i].name, commands[i].desc)
       }
 
       try {
-          await message.author.send(helpEmbed);
-          message.react("👍");
-          message.channel.send("Help page has been sent through DM");
+        await message.author.send(helpEmbed);
+        message.react("👍");
+        message.channel.send("Help page has been sent through DM");
       } catch (e) {
-          message.channel.send(helpEmbed);
+        message.channel.send(helpEmbed);
       }
     }
   },
@@ -183,7 +183,7 @@ let commands = {
 
       let sub = -1;
       for (let i in kaCreators.creators) {
-          if (kaCreators.creators[i].name === subName) sub = i;
+        if (kaCreators.creators[i].name === subName) sub = i;
       }
       if (sub === -1) return errors.usage(message, commands.removecreator, `${subName} is not a KA Creator`);
 
@@ -226,7 +226,7 @@ let commands = {
       let name = -1;
 
       for (let i in kaCreators.creators) {
-          if (kaCreators.creators[i].name.toLowerCase() === creatorName.toLowerCase()) name = kaCreators.creators[i];
+        if (kaCreators.creators[i].name.toLowerCase() === creatorName.toLowerCase()) name = kaCreators.creators[i];
       }
 
       if (name === -1) return errors.usage(message, commands.subscribe, `${creatorName} is not a creator role`);
@@ -234,13 +234,13 @@ let commands = {
       let creatorRole = message.guild.roles.find(`id`, name.role);
 
       if (!message.member.roles.has(creatorRole.id)) {
-          message.member.addRole(creatorRole.id);
+        message.member.addRole(creatorRole.id);
 
-          let sEmbed = new Discord.RichEmbed()
-          .setAuthor(message.author.username)
-          .addField("Subscribed", name.name);
+        let sEmbed = new Discord.RichEmbed()
+        .setAuthor(message.author.username)
+        .addField("Subscribed", name.name);
 
-          return message.channel.send(sEmbed);
+        return message.channel.send(sEmbed);
       }
 
       message.member.removeRole(creatorRole.id);
@@ -269,22 +269,22 @@ let commands = {
       
       let creator = -1;
       for (let i in kaCreators.creators) {
-          if (i === subCreator.id || i === subCreator || (subCreator.toString() === subCreator && kaCreators.creators[i].name.toLowerCase() === subCreator.toLowerCase())) creator = kaCreators.creators[i];
+        if (i === subCreator.id || i === subCreator || (subCreator.toString() === subCreator && kaCreators.creators[i].name.toLowerCase() === subCreator.toLowerCase())) creator = kaCreators.creators[i];
       }
 
       if (creator === -1) return errors.noPerms(message, "User must be a KA Creator");
 
       let subs = [];
       message.guild.members.forEach(m => {
-          m.roles.forEach(r => {
-              if (r.id === creator.role) subs.push(m);
-          });
+        m.roles.forEach(r => {
+          if (r.id === creator.role) subs.push(m);
+        });
       });
 
       let sEmbed = new Discord.RichEmbed()
       if (subs.length > 0) {
-          sEmbed.setAuthor(creator.name)
-          sEmbed.addField(`${subs.length} total subscribers`, subs)
+        sEmbed.setAuthor(creator.name)
+        sEmbed.addField(`${subs.length} total subscribers`, subs)
       }
       else sEmbed.addField(creator.name, "No subscribers")
 
@@ -309,27 +309,27 @@ let commands = {
       let longestSubName = 0;
   
       subscriptions.forEach(c => {
-          if (c.name.length > longestSubName) {
-              longestSubName = c.name.length;
-          }
+        if (c.name.length > longestSubName) {
+          longestSubName = c.name.length;
+        }
       })
       
       let subsText = [""];
       subscriptions.forEach(i => {
-          subMembers = 0;
-          message.guild.members.forEach(m => {
-              m.roles.forEach(r => {
-                  if (r.id === i.role) subMembers++;
-              });
+        subMembers = 0;
+        message.guild.members.forEach(m => {
+          m.roles.forEach(r => {
+            if (r.id === i.role) subMembers++;
           });
+        });
 
-          if (subsText[subsText.length - 1].length + longestSubName + 3 > 1024) subsText.push("");
+        if (subsText[subsText.length - 1].length + longestSubName + 3 > 1024) subsText.push("");
 
-          subsText[subsText.length - 1] += "`" + i.name;
-          for (var j = -3; j < longestSubName - i.name.length; j++) {
-              subsText[subsText.length - 1] += " ";
-          }
-          subsText[subsText.length - 1] += `${subMembers}\`\n`;
+        subsText[subsText.length - 1] += "`" + i.name;
+        for (var j = -3; j < longestSubName - i.name.length; j++) {
+          subsText[subsText.length - 1] += " ";
+        }
+        subsText[subsText.length - 1] += `${subMembers}\`\n`;
       })
 
       let page = Math.floor(parseInt(args[0]));
@@ -403,9 +403,7 @@ bot.on("message", async message => { // When a message is sent
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
 
-  let content = message.content.split("");
-  while (content.join("").indexOf("kacc") >= 0) content.splice(content.join("").toLowerCase().indexOf("kacc"), 4, "ew");
-  if (message.content.toLowerCase().indexOf("kacc") >= 0) message.channel.send(content.join(""));
+  if (message.content.split("nat").length > 1) message.channel.send(message.content.split(/nat|naT|nAt|nAT|Nat|NaT|NAt|NAT/).join("<:nat:442789920789102602>"));
   else if (message.channel.name !== "chat" && message.channel.id !== "421434381635289090") {
     if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
     else if (message.content.toLowerCase().indexOf("oops") >= 0) message.channel.send("<:oops:451813761481965568>");
