@@ -403,7 +403,7 @@ bot.on("message", async message => { // When a message is sent
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
 
-  if (message.content.split("nat").length > 1) message.channel.send(message.content.split(/nat|naT|nAt|nAT|Nat|NaT|NAt|NAT/).join("<:nat:442789920789102602>"));
+  if (message.content.toLowerCase().split("nat").length > 1) message.channel.send(message.content.split(/nat|naT|nAt|nAT|Nat|NaT|NAt|NAT/).join("<:nat:442789920789102602>"));
   else if (message.channel.name !== "chat" && message.channel.id !== "421434381635289090") {
     if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
     else if (message.content.toLowerCase().indexOf("oops") >= 0) message.channel.send("<:oops:451813761481965568>");
