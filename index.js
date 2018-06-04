@@ -361,6 +361,11 @@ let commands = {
 
 //bot.on("guildMemberAdd", async member => {if (member.user.username.toLowerCase().indexOf("oops") >= 0) member.kick(`${member.user.username} has "oops" in it, so they must be dealt with`);});
 
+let autoresponseCooldown = 0;
+setInterval(function() {
+  autoresponseCooldown--;
+}, 1)
+
 bot.on("message", async message => { // When a message is sent
   if (message.author.bot) return; // Ignores the message if it is sent by a bot
   if (message.channel.type === "dm") return;
@@ -403,10 +408,21 @@ bot.on("message", async message => { // When a message is sent
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
 
-  if (message.content.toLowerCase().split("nat").length > 1) message.channel.send(message.content.split(/nat|naT|nAt|nAT|Nat|NaT|NAt|NAT/).join("<:nat:442789920789102602>"));
-  else if (message.channel.name !== "chat" && message.channel.id !== "421434381635289090") {
-    if (message.content.indexOf("😉") >= 0) message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
-    else if (message.content.toLowerCase().indexOf("oops") >= 0) message.channel.send("<:oops:451813761481965568>");
+  if (autoresponseCooldown <= 0) {
+    if (message.content.toLowerCase().split("nat").length > 1) {
+      message.channel.send(message.content.split(/nat|naT|nAt|nAT|Nat|NaT|NAt|NAT/).join("<:nat:442789920789102602>"));
+      autoresponseCooldown = 60000;
+    }
+    else if (message.channel.name !== "chat" && message.channel.id !== "421434381635289090") {
+      if (message.content.indexOf("😉") >= 0) {
+        message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
+        autoresponseCooldown = 60000;
+      }
+      else if (message.content.toLowerCase().indexOf("oops") >= 0) {
+        message.channel.send("<:oops:451813761481965568>");
+        autoresponseCooldown = 60000;
+      }
+    }
   }
 
   let languageFilters = ["xd"];
