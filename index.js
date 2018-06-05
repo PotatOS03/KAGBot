@@ -127,6 +127,67 @@ let commands = {
       return message.channel.send(botEmbed);
     }
   },
+  clear: {
+    name: "clear",
+    desc: "Clear messages",
+    group: "Moderation",
+    usage: " [number of messages] (equals/contains/author/bots) (text/author)",
+    perms: "Guardian",
+    info: "Equals: Clears messages that match text\nContains: Clears messages containing text\nAuthor: Clears messages sent by a certain user\nBots: Clears messages sent by bots",
+    run: async (message, args) => {
+      if (!message.member.hasPermission("MANAGE_MESSAGES")) return errors.noPerms(message, "Manage Messages");
+
+      if (!parseInt(args[0])) return errors.usage(message, "clear", "Specify a number of messages.");
+
+      let limitLeft = parseInt(args[0]) + 1;
+      let cleared = 0;
+
+      if (!args[1]) {
+          message.delete().catch();
+
+          while (limitLeft > 0) {
+              let messages = await message.channel.fetchMessages({limit: Math.min(limitLeft, 100)});
+      
+              limitLeft -= messages.size;
+              cleared += messages.size;
+              if (messages.size === 0) limitLeft = 0;
+              await message.channel.bulkDelete(messages);
+          }
+          return message.channel.send(`Cleared ${cleared - 1} messages.`).then(msg => msg.delete(3000));
+      }
+
+      if (args[1] !== "contains" && args[1] !== "equals" && args[1] !== "author" && args[1] !== "bots") return errors.usage(message, "clear", "Invalid type of messages.");
+
+      let requirement = args.slice(2).join(" ");
+      if (args[1] !== "bots") {
+          if (!requirement) return errors.usage(message, "clear", "Specify a requirement");
+      }
+
+      message.delete().catch();
+      
+      while (limitLeft > 0) {
+          let messages = await message.channel.fetchMessages({limit: Math.min(limitLeft, 100)});
+          if (args[1] === "equals") {
+              messages = messages.filter(message => message.content === requirement);
+          }
+          if (args[1] === "contains") {
+              messages = messages.filter(message => message.content.indexOf(requirement) >= 0);
+          }
+          if (args[1] === "author") {
+              messages = messages.filter(m => `<@${m.author.id}>` === requirement || m.author.username === requirement);
+          }
+          if (args[1] === "bots") {
+              messages = messages.filter(m => m.author.bot);
+          }
+
+          limitLeft -= messages.size;
+          cleared += messages.size;
+          if (messages.size === 0) limitLeft = 0;
+          await message.channel.bulkDelete(messages);
+      }
+      message.channel.send(`Cleared ${cleared} messages.`).then(msg => msg.delete(3000));
+    }
+  },
   help: {
     name: "help",
     desc: "See a list of commands or information about a command",
@@ -361,10 +422,25 @@ let commands = {
 
 //bot.on("guildMemberAdd", async member => {if (member.user.username.toLowerCase().indexOf("oops") >= 0) member.kick(`${member.user.username} has "oops" in it, so they must be dealt with`);});
 
+let languageFilters = ["xd"];
+
 let autoresponseCooldown = 0;
 setInterval(function() {
   autoresponseCooldown--;
 }, 1)
+
+bot.on("messageUpdate", async (oldMessage, newMessage) => {
+  try {
+    for (var i = 0; i < languageFilters.length; i++) {
+      if (newMessage.content.toLowerCase().indexOf(languageFilters[i]) >= 0) {
+        if (newMessage.content.length - 20 > languageFilters[i].length && newMessage.content.toLowerCase().split(languageFilters[i]).length - 1 < newMessage.content.length / languageFilters[i].length / 3) return;
+        await newMessage.delete();
+      }
+    }
+  } catch(error) {
+    errors.log(bot, newMessage, error);
+  }
+})
 
 bot.on("message", async message => { // When a message is sent
   if (message.author.bot) return; // Ignores the message if it is sent by a bot
@@ -424,8 +500,6 @@ bot.on("message", async message => { // When a message is sent
       }
     }
   }
-
-  let languageFilters = ["xd"];
     
   try {
     for (var i = 0; i < languageFilters.length; i++) {
