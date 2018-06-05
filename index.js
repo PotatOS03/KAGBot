@@ -92,7 +92,7 @@ let commands = {
       }
     
       let subCategory = message.guild.channels.find(`name`, "Subscriptions");
-      creatorChannel.setParent(subCategory.id);
+      await creatorChannel.setParent(subCategory.id);
     
       KAUser.addRole(creatorRole.id);
     
@@ -135,7 +135,8 @@ let commands = {
     perms: "Guardian",
     info: "Equals: Clears messages that match text\nContains: Clears messages containing text\nAuthor: Clears messages sent by a certain user\nBots: Clears messages sent by bots",
     run: async (message, args) => {
-      if (!message.member.hasPermission("MANAGE_MESSAGES")) return errors.noPerms(message, "Manage Messages");
+      let guardianRole = message.guild.roles.find("name", "Guardian")
+      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Manage Messages");
 
       if (!parseInt(args[0])) return errors.usage(message, "clear", "Specify a number of messages.");
 
@@ -186,6 +187,36 @@ let commands = {
           await message.channel.bulkDelete(messages);
       }
       message.channel.send(`Cleared ${cleared} messages.`).then(msg => msg.delete(3000));
+    }
+  },
+  editcreator: {
+    name: "editcreator",
+    desc: "Edit a KA Creator's name",
+    usage: " [user] [name]",
+    perms: "Guardian",
+    run: (message, args) => {
+      let guardianRole = message.guild.roles.find("name", "Guardian");
+      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Guardian");
+
+      if (!args[0]) return errors.usage(message, commands.editcreator, "Specify a user to edit")
+      let editCreator = bot.users.find("id", args[0]) || message.mentions.members.first();
+      editCreator = editCreator.user || editCreator;
+
+      if (!editCreator) return errors.usage(message, commands.editcreator, "Specify a valid user");
+      if (!kaCreators.creators[editCreator.id]) return errors.usage(message, commands.editcreator, "User is not a KA Creator");
+
+      if (!args[1]) return errors.usage(message, commands.editcreator, "Specify a name to change to");
+      let oldName = kaCreators.creators[editCreator.id].name;
+      let newName = args.slice(1).join(" ");
+
+      let creatorRole = message.guild.roles.find("id", kaCreators.creators[editCreator.id].role);
+      let creatorChannel = message.guild.channels.find("id", kaCreators.creators[editCreator.id].channel);
+
+      kaCreators.creators[editCreator.id].name = newName;
+      creatorRole.edit({name: newName});
+      creatorChannel.edit({name: newName});
+
+      message.channel.send(`Creator successfully renamed from \`${oldName}\` to \`${newName}\``);
     }
   },
   help: {
