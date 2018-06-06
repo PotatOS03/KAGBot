@@ -138,7 +138,7 @@ let commands = {
       let guardianRole = message.guild.roles.find("name", "Guardian")
       if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Manage Messages");
 
-      if (!parseInt(args[0])) return errors.usage(message, "clear", "Specify a number of messages.");
+      if (!parseInt(args[0])) return errors.usage(message, commands.clear, "Specify a number of messages.");
 
       let limitLeft = parseInt(args[0]) + 1;
       let cleared = 0;
@@ -157,11 +157,11 @@ let commands = {
           return message.channel.send(`Cleared ${cleared - 1} messages.`).then(msg => msg.delete(3000));
       }
 
-      if (args[1] !== "contains" && args[1] !== "equals" && args[1] !== "author" && args[1] !== "bots") return errors.usage(message, "clear", "Invalid type of messages.");
+      if (args[1] !== "contains" && args[1] !== "equals" && args[1] !== "author" && args[1] !== "bots") return errors.usage(message, commands.clear, "Invalid type of messages.");
 
       let requirement = args.slice(2).join(" ");
       if (args[1] !== "bots") {
-          if (!requirement) return errors.usage(message, "clear", "Specify a requirement");
+          if (!requirement) return errors.usage(message, commands.clear, "Specify a requirement");
       }
 
       message.delete().catch();
@@ -169,13 +169,13 @@ let commands = {
       while (limitLeft > 0) {
           let messages = await message.channel.fetchMessages({limit: Math.min(limitLeft, 100)});
           if (args[1] === "equals") {
-              messages = messages.filter(message => message.content === requirement);
+              messages = messages.filter(message => message.content.toLowerCase() === requirement.toLowerCase());
           }
           if (args[1] === "contains") {
-              messages = messages.filter(message => message.content.indexOf(requirement) >= 0);
+              messages = messages.filter(message => message.content.toLowerCase().indexOf(requirement.toLowerCase()) >= 0);
           }
           if (args[1] === "author") {
-              messages = messages.filter(m => `<@${m.author.id}>` === requirement || m.author.username === requirement);
+              messages = messages.filter(m => `<@${m.author.id}>` === requirement || `<@!${m.author.id}>` === requirement || m.author.username === requirement);
           }
           if (args[1] === "bots") {
               messages = messages.filter(m => m.author.bot);
@@ -453,7 +453,7 @@ let commands = {
 
 //bot.on("guildMemberAdd", async member => {if (member.user.username.toLowerCase().indexOf("oops") >= 0) member.kick(`${member.user.username} has "oops" in it, so they must be dealt with`);});
 
-let languageFilters = ["xd"];
+let languageFilters = ["xd", "x-d", "x d", "x.d", "x'd"];
 
 let autoresponseCooldown = 0;
 setInterval(function() {
