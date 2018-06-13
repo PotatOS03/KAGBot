@@ -8,22 +8,94 @@ const fs = require("fs");
 
 // File for the bot configuration - includes default prefix
 const botconfig = require("./botconfig.json");
-// File for running errors
-const errors = require("./utilities/errors.js");
+
+const { Client } = require("pg");
+
+const client = new Client({
+  connectionString: `${botconfig.connectionURL || process.env.DATABASE_URL}?ssl=true`
+})
+client.connect();
+
+// Information about each KA Creator
+let creators = {};
+client.query("SELECT * FROM creators", (err, res) => {
+  res.rows.forEach(r => {
+    creators[r.id] = {
+      name: r.name,
+      role: r.role,
+      channel: r.channel
+    }
+  })
+})
 
 bot.on("ready", async () => { // When the bot is loaded
   console.log(`${bot.user.username} is online in ${bot.guilds.size} servers!`);
-
-  let PotatOS = bot.users.find(`id`, "286664522083729409");
-  PotatOS.send("Bot reloaded!");
   bot.user.setActivity(`${botconfig.prefix}help`);
 });
 
-// File for all KA Creators
-let kaCreators = require("./kacreators.json");
-
 let uptime = 0;
 setInterval(e => uptime++, 1);
+
+// All error utilities
+const errors = {
+  log: (bot, message, error) => {
+    let logChannel = bot.channels.find("id", "446758267490926592");
+    let errorMessage = "";
+    for (var i = 0; i < Math.min(error.stack.toString().length, 1018); i++) {
+        errorMessage += error.stack.toString()[i];
+    }
+
+    let logEmbed = new Discord.RichEmbed()
+    .setDescription(`Error in ${message.channel.toString()} (${message.guild.name})`)
+    .setColor("f04747")
+    .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL)
+    .addField("Message", message.content)
+    .addField("Error", "```" + errorMessage + "```")
+    .setTimestamp(message.createdAt)
+    
+    logChannel.send(logEmbed);
+    message.channel.send("Uh oh, it looks like an error has occurred! A log has been sent and will be investigated shortly.");
+  },
+  noPerms: (message, perm) => {
+    message.delete();
+    
+    let permEmbed = new Discord.RichEmbed()
+    .setAuthor(message.author.username)
+    .setTitle("NO PERMISSIONS")
+    .setColor("f04747")
+    .addField("Message Sent", message.content)
+    .addField("Insufficient Permission", perm);
+
+    message.channel.send(permEmbed).then(m => m.delete(10000));
+  },
+  usage: (message, command, info) => {
+    message.delete();
+
+    let botconfig = require("./botconfig.json");
+
+    let usageEmbed = new Discord.RichEmbed()
+    .setAuthor(message.author.username)
+    .setTitle("INCORRECT USAGE")
+    .setColor("f04747")
+    .addField("Message Sent", message.content)
+    .addField("Usage", "`" + `${botconfig.prefix}${command.name}${command.usage}` + "`", true)
+    .addField("Info", info, true);
+
+    message.channel.send(usageEmbed).then(msg => msg.delete(60000));
+  },
+  other: (message, info) => {
+    message.delete();
+
+    let embed = new Discord.RichEmbed()
+    .setAuthor(message.author.username)
+    .setTitle("ERROR")
+    .setColor("f04747")
+    .addField("Message Sent", message.content)
+    .addField("Info", info);
+
+    message.channel.send(embed).then(msg => msg.delete(30000));
+  }
+}
 
 // All bot commands
 let commands = {
@@ -45,12 +117,7 @@ let commands = {
       })
       if (KAUser === args[0]) return errors.usage(message, commands.addcreator, `${args[0]} is not a member of this server`);
       
-      if (!kaCreators.creators) {
-        kaCreators = {
-          creators: {}
-        }
-      }
-      if (kaCreators.creators[KAUser.id]) return errors.other(message, "That user is already a KA Creator");
+      if (creators[KAUser.id]) return errors.other(message, "That user is already a KA Creator");
       
       let kaCreatorRole = message.guild.roles.find(`name`, "KA Creator");
       KAUser.addRole(kaCreatorRole.id);
@@ -102,7 +169,7 @@ let commands = {
         message.channel.send(`Congratulations ${KAUser}, you have been given your very own KA Subscription channel! You can edit it as you wish, and give people updates about what you're working on. Check it out over at <#${creatorChannel.id}>. Enjoy!`);
       }
     
-      kaCreators.creators[KAUser.id] = {
+      creators[KAUser.id] = {
         name: KAname,
         role: creatorRole.id,
         channel: creatorChannel.id
@@ -203,16 +270,16 @@ let commands = {
       editCreator = editCreator.user || editCreator;
 
       if (!editCreator) return errors.usage(message, commands.editcreator, "Specify a valid user");
-      if (!kaCreators.creators[editCreator.id]) return errors.usage(message, commands.editcreator, "User is not a KA Creator");
+      if (!creators[editCreator.id]) return errors.usage(message, commands.editcreator, "User is not a KA Creator");
 
       if (!args[1]) return errors.usage(message, commands.editcreator, "Specify a name to change to");
-      let oldName = kaCreators.creators[editCreator.id].name;
+      let oldName = creators[editCreator.id].name;
       let newName = args.slice(1).join(" ");
 
-      let creatorRole = message.guild.roles.find("id", kaCreators.creators[editCreator.id].role);
-      let creatorChannel = message.guild.channels.find("id", kaCreators.creators[editCreator.id].channel);
+      let creatorRole = message.guild.roles.find("id", creators[editCreator.id].role);
+      let creatorChannel = message.guild.channels.find("id", creators[editCreator.id].channel);
 
-      kaCreators.creators[editCreator.id].name = newName;
+      creators[editCreator.id].name = newName;
       creatorRole.edit({name: newName});
       creatorChannel.edit({name: newName});
 
@@ -271,15 +338,15 @@ let commands = {
       let subName = args.slice(0).join(" ");
       if (!subName) return errors.usage(message, commands.removecreator, "No creator specified");
 
-      if (!kaCreators.creators || Object.keys(kaCreators.creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
+      if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
       let sub = -1;
-      for (let i in kaCreators.creators) {
-        if (kaCreators.creators[i].name === subName) sub = i;
+      for (let i in creators) {
+        if (creators[i].name === subName) sub = i;
       }
       if (sub === -1) return errors.usage(message, commands.removecreator, `${subName} is not a KA Creator`);
 
-      delete kaCreators.creators[sub];
+      delete creators[sub];
       
       let subRole = message.guild.roles.find(`name`, subName);
       subRole.delete();
@@ -310,15 +377,15 @@ let commands = {
       let commandChannel = message.guild.channels.find(`name`, "commands");
       if (message.channel.name !== "commands") return errors.other(message, `Subscribe in ${commandChannel}`);
 
-      if (!kaCreators.creators || Object.keys(kaCreators.creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
+      if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
       if (!args[0]) return errors.usage(message, commands.subscribe, "Choose a creator to subscribe to\nUse the subscriptions command to view all creators");
 
       let creatorName = args.slice(0).join(" ");
       let name = -1;
 
-      for (let i in kaCreators.creators) {
-        if (kaCreators.creators[i].name.toLowerCase() === creatorName.toLowerCase()) name = kaCreators.creators[i];
+      for (let i in creators) {
+        if (creators[i].name.toLowerCase() === creatorName.toLowerCase()) name = creators[i];
       }
 
       if (name === -1) return errors.usage(message, commands.subscribe, `${creatorName} is not a creator role`);
@@ -353,15 +420,15 @@ let commands = {
       let commandChannel = message.guild.channels.find(`name`, "commands");
       if (message.channel.name !== "commands") return errors.other(message, `View subscriptions in ${commandChannel}`);
       
-      if (!kaCreators.creators || Object.keys(kaCreators.creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
+      if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
       let subCreator = message.mentions.members.first();
       if (!subCreator) subCreator = args.join(" ");
       if (!subCreator) subCreator = message.author;
       
       let creator = -1;
-      for (let i in kaCreators.creators) {
-        if (i === subCreator.id || i === subCreator || (subCreator.toString() === subCreator && kaCreators.creators[i].name.toLowerCase() === subCreator.toLowerCase())) creator = kaCreators.creators[i];
+      for (let i in creators) {
+        if (i === subCreator.id || i === subCreator || (subCreator.toString() === subCreator && creators[i].name.toLowerCase() === subCreator.toLowerCase())) creator = creators[i];
       }
 
       if (creator === -1) return errors.noPerms(message, "User must be a KA Creator");
@@ -392,9 +459,9 @@ let commands = {
       let commandChannel = message.guild.channels.find(`name`, "commands");
       if (message.channel.name !== "commands") return errors.other(message, `View subscriptions in ${commandChannel}`);
       
-      if (!kaCreators.creators || Object.keys(kaCreators.creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
+      if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
-      let subscriptions = Object.values(kaCreators.creators).sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
+      let subscriptions = Object.values(creators).sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
       
       let subMembers = 0;
   
@@ -458,7 +525,7 @@ let languageFilters = ["xd", "x-d", "x d", "x.d", "x'd"];
 let autoresponseCooldown = 0;
 setInterval(function() {
   autoresponseCooldown--;
-}, 1)
+}, 1);
 
 bot.on("messageUpdate", async (oldMessage, newMessage) => {
   try {
@@ -471,14 +538,14 @@ bot.on("messageUpdate", async (oldMessage, newMessage) => {
   } catch(error) {
     errors.log(bot, newMessage, error);
   }
-})
+});
 
-bot.on("message", async message => { // When a message is sent
+bot.on("message", message => { // When a message is sent
   if (message.author.bot) return; // Ignores the message if it is sent by a bot
   if (message.channel.type === "dm") return;
   
-  // Original kacreators file to compare with later
-  let oldKaCreators = fs.readFileSync("./kacreators.json", {encoding: "UTF-8"});
+  // Original creators to compare with later
+  let oldCreators = Object.values(creators);
   
   // Get certain parts of the message sent
   let messageArray = message.content.split(" ");
@@ -496,18 +563,16 @@ bot.on("message", async message => { // When a message is sent
         try {
           commands[i].run(message, args);
         } catch(error) {
-          errors.log(bot, message, error)
+          errors.log(bot, message, error);
+        }
+
+        // Save the creators database
+        client.query("DELETE FROM creators");
+        for (let i in creators) {
+          client.query(`INSERT INTO creators VALUES (${i}, '${creators[i].name}', ${creators[i].role}, ${creators[i].channel})`);
         }
       }
     }
-  }
-  
-  if (JSON.stringify(kaCreators) !== oldKaCreators) {
-    let logChannel = bot.channels.find("id", "446758267490926592");
-    
-    let logCreators = [];
-    for (let i = 0; i < JSON.stringify(kaCreators).length; i += 2000) logChannel.send(JSON.stringify(kaCreators).substr(i, i + 2000));
-    fs.writeFileSync("./kacreators.json", JSON.stringify(kaCreators));
   }
   
   // Fun language filter stuff - you won't regret it
@@ -536,7 +601,7 @@ bot.on("message", async message => { // When a message is sent
     for (var i = 0; i < languageFilters.length; i++) {
       if (message.content.toLowerCase().indexOf(languageFilters[i]) >= 0) {
         if (message.content.length - 20 > languageFilters[i].length && message.content.toLowerCase().split(languageFilters[i]).length - 1 < message.content.length / languageFilters[i].length / 3) return;
-        await message.delete();
+        message.delete();
       }
     }
   } catch(error) {
@@ -547,7 +612,7 @@ bot.on("message", async message => { // When a message is sent
     if (message.author.id !== "286664522083729409") return;
     let code = args.slice(0).join(" ");
     try {
-        await eval(code);
+        eval(code);
     } catch(e) {
         message.channel.send("`" + e.toString() + "`");
     }
