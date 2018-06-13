@@ -1,10 +1,13 @@
 {
   "name": "kagbot",
   "version": "1.0.0",
-  "description": "Discord bot",
+  "description": "Discord bot for KA Gurus",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.3.2"
+    "discord.js": "^11.3.2",
+    "ms": "^2.1.1",
+    "pg": "^7.4.3",
+    "superagent": "^3.8.2"
   },
   "devDependencies": {},
   "scripts": {
