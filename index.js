@@ -520,7 +520,7 @@ let commands = {
 
 //bot.on("guildMemberAdd", async member => {if (member.user.username.toLowerCase().indexOf("oops") >= 0) member.kick(`${member.user.username} has "oops" in it, so they must be dealt with`);});
 
-let languageFilters = ["xd", "x-d", "x d", "x.d", "x'd"];
+let languageFilters = ["xd", "x-d", "x d", "x.d", "x'd", ".-."];
 
 let autoresponseCooldown = 0;
 setInterval(function() {
