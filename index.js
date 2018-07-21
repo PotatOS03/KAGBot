@@ -1,3 +1,6 @@
+//TO DO: Add a beginning section here
+
+
 // Basic bot setup - this is what lets the bot interact with Discord
 const Discord = require("discord.js");
 const bot = new Discord.Client({disableEveryone: true});
@@ -136,7 +139,7 @@ let commands = {
         }
       }
       
-      let everyoneRole = message.guild.roles.find(`name`, "@everyone")
+      let everyoneRole = message.guild.defaultRole;
       let creatorChannel = message.guild.channels.find(`name`, KAname.split(" ").join("-").toLowerCase());
       
       if (!creatorChannel) {
@@ -576,26 +579,10 @@ bot.on("message", message => { // When a message is sent
   }
   
   // Fun language filter stuff - you won't regret it
+  // [REMOVED BECAUSE YOU REGRET IT]
 
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
-
-  if (autoresponseCooldown <= 0) {
-    if (message.content.toLowerCase().split("nat").length > 1) {
-      message.channel.send(message.content.split(/nat|naT|nAt|nAT|Nat|NaT|NAt|NAT/).join("<:nat:442789920789102602>"));
-      autoresponseCooldown = 120000;
-    }
-    else if (message.channel.name !== "chat" && message.channel.id !== "421434381635289090") {
-      if (message.content.indexOf("😉") >= 0) {
-        message.channel.send(message.content.replace(/\ud83d\ude09/g, () => `;${"WINK".split``.sort(() => Math.random() - 0.5).join``};`));
-        autoresponseCooldown = 120000;
-      }
-      else if (message.content.toLowerCase().indexOf("oops") >= 0) {
-        message.channel.send("<:oops:451813761481965568>");
-        autoresponseCooldown = 120000;
-      }
-    }
-  }
     
   try {
     for (var i = 0; i < languageFilters.length; i++) {
