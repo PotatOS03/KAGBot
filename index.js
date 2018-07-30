@@ -106,10 +106,10 @@ let commands = {
     name: "addcreator",
     desc: "Set up a channel and role for a KA Creator",
     usage: " [user] [name]",
-    perms: "Guardian",
+    perms: "Staff",
     run: async (message, args) => {
-      let guardianRole = message.guild.roles.find(`name`, "Guardian");
-      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Guardian");
+      let guardianRole = message.guild.roles.find(`name`, "Guru Staff");
+      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Staff");
       
       if (!args[0]) return errors.usage(message, commands.addcreator, "Specify a user to make a KA Creator");
       
@@ -202,10 +202,10 @@ let commands = {
     desc: "Clear messages",
     group: "Moderation",
     usage: " [number of messages] (equals/contains/author/bots) (text/author)",
-    perms: "Guardian",
+    perms: "Staff",
     info: "Equals: Clears messages that match text\nContains: Clears messages containing text\nAuthor: Clears messages sent by a certain user\nBots: Clears messages sent by bots",
     run: async (message, args) => {
-      let guardianRole = message.guild.roles.find("name", "Guardian")
+      let guardianRole = message.guild.roles.find("name", "Guru Staff")
       if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Manage Messages");
 
       if (!parseInt(args[0])) return errors.usage(message, commands.clear, "Specify a number of messages.");
@@ -263,10 +263,10 @@ let commands = {
     name: "editcreator",
     desc: "Edit a KA Creator's name",
     usage: " [user] [name]",
-    perms: "Guardian",
+    perms: "Staff",
     run: (message, args) => {
-      let guardianRole = message.guild.roles.find("name", "Guardian");
-      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Guardian");
+      let guardianRole = message.guild.roles.find("name", "Guru Staff");
+      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Staff");
 
       if (!args[0]) return errors.usage(message, commands.editcreator, "Specify a user to edit")
       let editCreator = bot.users.find("id", args[0]) || message.mentions.members.first();
@@ -294,7 +294,7 @@ let commands = {
     desc: "See a list of commands or information about a command",
     usage: " (command)",
     run: async (message, args) => {
-      let guardianRole = message.guild.roles.find(`name`, "Guardian");
+      let guardianRole = message.guild.roles.find(`name`, "Guru Staff");
 
       let arg = args.slice(0).join(" ");
       for (let i in commands) {
@@ -317,7 +317,7 @@ let commands = {
       .setFooter(`Type "${botconfig.prefix}help (command)" to view more information about a command`)
       
       for (let i in commands) {
-        if ((commands[i].perms !== "Guardian" || message.member.roles.has(guardianRole.id))) helpEmbed.addField(commands[i].name, commands[i].desc)
+        if ((commands[i].perms !== "Staff" || message.member.roles.has(guardianRole.id))) helpEmbed.addField(commands[i].name, commands[i].desc)
       }
 
       try {
@@ -333,10 +333,10 @@ let commands = {
     name: "removecreator",
     desc: "Remove a KA Creator role",
     usage: " [creator]",
-    perms: "Guardian",
+    perms: "Staff",
     run: (message, args) => {
-      let guardianRole = message.guild.roles.find(`name`, "Guardian");
-      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Guardian");
+      let guardianRole = message.guild.roles.find(`name`, "Guru Staff");
+      if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Staff");
 
       let subName = args.slice(0).join(" ");
       if (!subName) return errors.usage(message, commands.removecreator, "No creator specified");
@@ -361,9 +361,9 @@ let commands = {
     name: "say",
     desc: "Say a message through the bot",
     usage: " [message]",
-    perms: "Guardian",
+    perms: "Staff",
     run: (message, args) => {
-      let guardianRole = message.guild.roles.find("name", "Guardian");
+      let guardianRole = message.guild.roles.find("name", "Guru Staff");
       if (!message.member.roles.has(guardianRole.id)) return;
 
       let sayMessage = args.join(" ");
@@ -377,8 +377,8 @@ let commands = {
     desc: "Subscribe to a KA Creator to view their subscription channel",
     usage: " [creator]",
     run: (message, args) => {
-      let commandChannel = message.guild.channels.find(`name`, "commands");
-      if (message.channel.name !== "commands") return errors.other(message, `Subscribe in ${commandChannel}`);
+      let commandChannel = message.guild.channels.find(`name`, "bots");
+      if (message.channel.name !== "bots") return errors.other(message, `Subscribe in ${commandChannel}`);
 
       if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
@@ -420,8 +420,8 @@ let commands = {
     desc: "View all of your subscribers",
     info: "Only applicable for a KA Creator",
     run: (message, args) => {
-      let commandChannel = message.guild.channels.find(`name`, "commands");
-      if (message.channel.name !== "commands") return errors.other(message, `View subscriptions in ${commandChannel}`);
+      let commandChannel = message.guild.channels.find(`name`, "bots");
+      if (message.channel.name !== "bots") return errors.other(message, `View subscriptions in ${commandChannel}`);
       
       if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
@@ -459,8 +459,8 @@ let commands = {
     usage: " (page)",
     info: "How many subscribers each has",
     run: (message, args) => {
-      let commandChannel = message.guild.channels.find(`name`, "commands");
-      if (message.channel.name !== "commands") return errors.other(message, `View subscriptions in ${commandChannel}`);
+      let commandChannel = message.guild.channels.find(`name`, "bots");
+      if (message.channel.name !== "bots") return errors.other(message, `View subscriptions in ${commandChannel}`);
       
       if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
