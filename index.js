@@ -410,7 +410,7 @@ let commands = {
 
       let sEmbed = new Discord.RichEmbed()
       .setAuthor(message.author.username, message.author.displayAvatarURL)
-      .setColor("#e35914")
+      .setColor("#e34114")
       .addField("Unsubscribed", name.name);
 
       return message.channel.send(sEmbed);
