@@ -78,7 +78,7 @@ const errors = {
 
     let usageEmbed = new Discord.RichEmbed()
     .setAuthor(message.author.username)
-    .setTitle("INCORRECT USAGE")
+    .setTitle("Incorrect Usage")
     .setColor("f04747")
     .addField("Message Sent", message.content)
     .addField("Usage", "`" + `${botconfig.prefix}${command.name}${command.usage}` + "`", true)
@@ -102,8 +102,8 @@ const errors = {
 
 // All bot commands
 let commands = {
-  addcreator: {
-    name: "addcreator",
+  add: {
+    name: "add",
     desc: "Set up a channel and role for a KA Creator",
     usage: " [user] [name]",
     perms: "Staff",
@@ -111,22 +111,22 @@ let commands = {
       let guardianRole = message.guild.roles.find(`name`, "Guru Staff");
       if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Staff");
       
-      if (!args[0]) return errors.usage(message, commands.addcreator, "Specify a user to make a KA Creator");
+      if (!args[0]) return errors.usage(message, commands.add, "Specify a user to make a KA Creator");
       
       let KAUser = message.mentions.members.first();
       if (!KAUser) KAUser = args[0];
       message.guild.members.forEach(m => {
         if (m.id === args[0]) KAUser = m;
       })
-      if (KAUser === args[0]) return errors.usage(message, commands.addcreator, `${args[0]} is not a member of this server`);
+      if (KAUser === args[0]) return errors.usage(message, commands.add, `${args[0]} is not a member of this server`);
       
       if (creators[KAUser.id]) return errors.other(message, "That user is already a KA Creator");
       
-      let kaCreatorRole = message.guild.roles.find(`name`, "Creator");
-      KAUser.addRole(kaCreatorRole.id);
+      /*let kaCreatorRole = message.guild.roles.find(`name`, "Creator");
+      KAUser.addRole(kaCreatorRole.id);*/
       
       let KAname = args.slice(1).join(" ");
-      if (!KAname) return errors.usage(message, commands.addcreator, "Specify a name for the channel and role");
+      if (!KAname) return errors.usage(message, commands.add, "Specify a name for the channel and role");
       
       let creatorRole = message.guild.roles.find(`name`, KAname);
       if (!creatorRole) {
@@ -329,17 +329,17 @@ let commands = {
       }
     }
   },
-  removecreator: {
-    name: "removecreator",
+  remove: {
+    name: "remove",
     desc: "Remove a KA Creator role",
     usage: " [creator]",
     perms: "Staff",
-    run: (message, args) => {
+    run: async (message, args) => {
       let guardianRole = message.guild.roles.find(`name`, "Guru Staff");
       if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Staff");
 
       let subName = args.slice(0).join(" ");
-      if (!subName) return errors.usage(message, commands.removecreator, "No creator specified");
+      if (!subName) return errors.usage(message, commands.remove, "No creator specified");
 
       if (Object.keys(creators).length <= 0) return errors.other(message, "There are currently no KA Creator roles");
 
@@ -347,12 +347,12 @@ let commands = {
       for (let i in creators) {
         if (creators[i].name === subName) sub = i;
       }
-      if (sub === -1) return errors.usage(message, commands.removecreator, `${subName} is not a KA Creator`);
+      if (sub === -1) return errors.usage(message, commands.remove, `${subName} is not a KA Creator`);
 
       delete creators[sub];
       
       let subRole = message.guild.roles.find(`name`, subName);
-      subRole.delete();
+      await subRole.delete();
 
       message.channel.send("KA Creator: `" + subName + "` successfully removed");
     }
@@ -399,7 +399,8 @@ let commands = {
         message.member.addRole(creatorRole.id);
 
         let sEmbed = new Discord.RichEmbed()
-        .setAuthor(message.author.username)
+        .setAuthor(message.author.username, message.author.displayAvatarURL)
+        .setColor("#67e03a")
         .addField("Subscribed", name.name);
 
         return message.channel.send(sEmbed);
@@ -408,7 +409,8 @@ let commands = {
       message.member.removeRole(creatorRole.id);
 
       let sEmbed = new Discord.RichEmbed()
-      .setAuthor(message.author.username)
+      .setAuthor(message.author.username, message.author.displayAvatarURL)
+      .setColor("#e35914")
       .addField("Unsubscribed", name.name);
 
       return message.channel.send(sEmbed);
