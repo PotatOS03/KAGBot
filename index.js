@@ -606,7 +606,8 @@ bot.on("message", message => { // When a message is sent
   }
   
   // Think carefully before you post in #announcements
-  if (!message.member.roles.has(message.guild.roles.find("name", "Guru Staff")) && message.channel.name === "announcements") message.member.addRole(message.guild.roles.find("name", "Furry"));
+  let staffRole = message.guild.roles.find("name", "Guru Staff");
+  if (!message.member.roles.has(staffRole.id) && message.channel.name === "announcements") message.member.addRole(message.guild.roles.find("name", "Furry"));
 
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
