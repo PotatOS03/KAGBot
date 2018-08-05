@@ -1,5 +1,30 @@
-//TO DO: Add a beginning section here
-
+/**
+ * GURU SUBSCRIPTIONS
+ * Made by PotatOS
+ * A Discord bot that aids in the process of KA Gurus' subscription system
+ * Users can subscribe to and unsubscribe from creators at will in order to see the creator's subscription channel
+ * Guru Staff can easily edit the creators using commands
+ * 
+ * COMMANDS - Everyone can use
+ * botinfo            - Get information about the bot
+ * help               - See a list of commands or information about a command
+ * subscribe          - Subscribe to a KA Creator to view their subscription channel
+ * subscribers        - View all of your subscribers
+ * subscriptions      - View all KA Creators
+ * uptime             - See how long the bot has been running
+ * 
+ * COMMANDS - Staff only
+ * add         - Set up a channel and role for a KA Creator
+ * clear       - Clear messages
+ * edit        - Edit a KA Creator's name
+ * remove      - Remove a KA Creator role
+ * say         - Say a message through the bot
+ * 
+ * TO DO
+ * Redo to comments to accurately fit what's happening in the code
+ * Generalize better by removing the need to constantly change names based on what changes in the server
+ * ??? KA Gurus is dying but this bot needs to stay alive for contingency reasons
+ */
 
 // Basic bot setup - this is what lets the bot interact with Discord
 const Discord = require("discord.js");
@@ -259,8 +284,8 @@ let commands = {
       message.channel.send(`Cleared ${cleared} messages.`).then(msg => msg.delete(3000));
     }
   },
-  editcreator: {
-    name: "editcreator",
+  edit: {
+    name: "edit",
     desc: "Edit a KA Creator's name",
     usage: " [user] [name]",
     perms: "Staff",
@@ -268,14 +293,14 @@ let commands = {
       let guardianRole = message.guild.roles.find("name", "Guru Staff");
       if (!message.member.roles.has(guardianRole.id)) return errors.noPerms(message, "Staff");
 
-      if (!args[0]) return errors.usage(message, commands.editcreator, "Specify a user to edit")
+      if (!args[0]) return errors.usage(message, commands.edit, "Specify a user to edit")
       let editCreator = bot.users.find("id", args[0]) || message.mentions.members.first();
       editCreator = editCreator.user || editCreator;
 
       if (!editCreator) return errors.usage(message, commands.editcreator, "Specify a valid user");
-      if (!creators[editCreator.id]) return errors.usage(message, commands.editcreator, "User is not a KA Creator");
+      if (!creators[editCreator.id]) return errors.usage(message, commands.edit, "User is not a KA Creator");
 
-      if (!args[1]) return errors.usage(message, commands.editcreator, "Specify a name to change to");
+      if (!args[1]) return errors.usage(message, commands.edit, "Specify a name to change to");
       let oldName = creators[editCreator.id].name;
       let newName = args.slice(1).join(" ");
 
@@ -580,8 +605,8 @@ bot.on("message", message => { // When a message is sent
     }
   }
   
-  // Fun language filter stuff - you won't regret it
-  // [REMOVED BECAUSE YOU REGRET IT]
+  // Think carefully before you post in #announcements
+  if (!message.member.roles.has(message.guild.roles.find("name", "Guru Staff")) && message.channel.name === "announcements") message.member.addRole(message.guild.roles.find("name", "Furry"));
 
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
