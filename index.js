@@ -23,7 +23,7 @@
  * TO DO
  * Redo to comments to accurately fit what's happening in the code
  * Generalize better by removing the need to constantly change names based on what changes in the server
- * ??? KA Gurus is dying but this bot needs to stay alive for contingency reasons
+ * ??? KA Gurus is archived but this bot needs to stay alive for contingency reasons
  */
 
 // Basic bot setup - this is what lets the bot interact with Discord
@@ -604,10 +604,6 @@ bot.on("message", message => { // When a message is sent
       }
     }
   }
-  
-  // Think carefully before you post in #announcements
-  let staffRole = message.guild.roles.find("name", "Guru Staff");
-  if (!message.member.roles.has(staffRole.id) && message.channel.name === "announcements") message.member.addRole(message.guild.roles.find("name", "Furry"));
 
   if (/https?:\/\/(www\.)?tenor\.com?/.test(message.content)) message.delete();
   if (/^[\s./…]+$/.test(message.content)) message.delete();
